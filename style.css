@@ -5,16 +5,17 @@
    Structure:
      1. Design tokens (colours from the graphical manual, fonts)
      2. Base / reset
-     3. Hero
-     4. Sections (shared block rules)
-     5. Research + Group
-     6. Lecture video + group photo
-     7. Places (map)
-     8. Footer
-     9. Responsive
+     3. Header (hero)
+     4. Sections + colour classes
+     5. Reusable pieces: .highlight, .box, .cards
+     6. Group, lecture video, places (map)
+     7. Footer
+     8. Responsive
+     9. Section nav (scroll-spy)
 
-   Styling targets plain elements and section ids so the markup stays clean.
-   The only helper classes are .vision (in #research) and .cta (in #places).
+   Colour is class-driven: a section carries .blue/.green/.red/.yellow, which set --accent and
+   --accent-light; headings and the reusable pieces (.highlight, .box, .cards, .cta) read those, so
+   any piece can move to another section and re-colour itself. Default (no class) is near-black.
    ================================================================= */
 
 /* 1. Design tokens ------------------------------------------------ */
@@ -29,10 +30,12 @@
   --green-light: #a5d6a7;
   --yellow:      #f9a825;
   --yellow-light:#fff59d;
+  --yellow-dark: #8a5a00;   /* yellow fails as text on white; this darker amber passes AA */
 
   --ink:    #1b2430;   /* body text */
   --muted:  #55606b;
   --border: #dfe4e8;
+  --bg:     #f7f8fa;   /* off-white page; white cards lift off it */
 
   /* fonts. To go all Space Grotesk: set --font-body to var(--font-head). */
   --font-head: 'Space Grotesk', system-ui, -apple-system, Segoe UI, sans-serif;
@@ -51,7 +54,7 @@ body {
   font-family: var(--font-body);
   color: var(--ink);
   line-height: 1.6;
-  background: #fff;
+  background: var(--bg);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -64,52 +67,58 @@ a:hover { text-decoration: none; }
 
 :focus-visible { outline: 3px solid var(--blue-light); outline-offset: 2px; }
 
-/* 3. Hero --------------------------------------------------------- */
-#hero {
+/* 3. Header (hero) ------------------------------------------------ */
+header {
   background: var(--blue);
   color: #fff;
   padding: 3.5rem 1.25rem;
 }
-#hero > div {
+header > div {
   max-width: var(--maxw);
   margin-inline: auto;
   display: flex;
   align-items: center;
   gap: 2rem;
-  /* no flex-wrap: above the breakpoint the text shrinks beside the photo instead of
-     wrapping below it; below 760px the media query switches to a stacked column. */
+  /* no flex-wrap: above the breakpoint the text shrinks beside the photo; below 760px it stacks. */
 }
-#hero img {           /* the photo */
+header img {           /* the photo */
   width: 240px;
   height: 240px;
   flex: none;
   object-fit: cover;
   border-radius: 12px;
 }
-#hero h1 { font-size: 2.5rem; font-weight: 700; }
-#hero p { margin-top: 0.4rem; }
-#hero h1 + p {            /* slogan: prominent, right under the name */
+header h1 { font-size: 2.5rem; font-weight: 700; }
+header p { margin-top: 0.4rem; }
+header h1 + p {            /* slogan: prominent, right under the name */
   font-family: var(--font-head);
   font-size: 1.45rem;
   font-weight: 500;
   color: #fff;
   margin-top: 0.6rem;
 }
-#hero h1 + p + p { color: #fff; margin-top: 1.3rem; }   /* affiliation, separated by whitespace */
-#hero a { color: #fff; }
+header h1 + p + p { color: #fff; margin-top: 1.3rem; }   /* affiliation, separated by whitespace */
+header a { color: #fff; }
 
-#hero nav { display: flex; align-items: center; gap: 1.1rem; margin-top: 1.2rem; }
-#hero nav a { display: inline-flex; color: #fff; }
-#hero nav svg { height: 26px; width: auto; fill: currentColor; display: block; }
-#hero nav a:hover { color: var(--blue-light); }
+header nav { display: flex; align-items: center; gap: 1.1rem; margin-top: 1.2rem; }
+header nav a { display: inline-flex; color: #fff; }
+header nav svg { height: 26px; width: auto; fill: currentColor; display: block; }
+header nav a:hover { color: var(--blue-light); }
 
-/* 4. Sections (shared block rules) -------------------------------- */
+/* 4. Sections + colour classes ----------------------------------- */
 /* Centred content column built from padding (no wrapper div needed). */
 main > section {
   padding-block: 1.5rem;
   padding-inline: max(1.25rem, calc((100% - var(--maxw)) / 2));
+  --accent: var(--ink);            /* default colour: near-black */
+  --accent-light: var(--border);
 }
 main > section:first-child { padding-top: 3rem; }   /* keep the gap below the hero */
+
+.blue   { --accent: var(--blue);        --accent-light: var(--blue-light); }
+.green  { --accent: var(--green);       --accent-light: var(--green-light); }
+.red    { --accent: var(--red);         --accent-light: var(--red-light); }
+.yellow { --accent: var(--yellow-dark); --accent-light: var(--yellow); }   /* dark text, bright underline */
 
 /* Cap running prose at a readable measure (~70 chars); media/cards stay full width. */
 main p { max-width: 68ch; }
@@ -117,7 +126,7 @@ main p { max-width: 68ch; }
 section h2 {
   font-size: 1.85rem;
   font-weight: 700;
-  color: var(--blue);
+  color: var(--accent);
   margin-bottom: 1rem;
 }
 section h2::after {
@@ -126,33 +135,33 @@ section h2::after {
   width: 3rem;
   height: 3px;
   margin-top: 0.4rem;
-  background: var(--blue-light);
+  background: var(--accent-light);
 }
 section p { margin-top: 0.85rem; }
 
-/* 5. Research + Group -------------------------------------------- */
-/* Intro is two columns: running text beside the vision pull-quote, so the lead
-   reads at a comfortable measure and fills the width without needing an image. */
-#research > div {
-  display: grid;
-  grid-template-columns: 1.7fr 1fr;
-  gap: 2.5rem;
-  align-items: center;          /* vision sits centred beside the lead text */
-  margin-top: 1.2rem;
-}
-#research > div p { max-width: none; }
-#research > div > p:first-child { font-size: 1.05rem; line-height: 1.7; }
-#research .vision {
-  margin: 0;
-  padding-left: 1.1rem;
-  border-left: 4px solid var(--blue);
+/* 5. Reusable pieces --------------------------------------------- */
+.highlight {                 /* a connecting one-liner: pops above body, but below the heading */
   font-family: var(--font-head);
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   font-weight: 500;
   line-height: 1.4;
-  color: var(--ink);
+  color: var(--accent);
+  margin-top: 1.1rem;
+  max-width: 50ch;
 }
-#research .vision strong {      /* "Future vision" label */
+.box {                       /* solid accent card with white text; pops at the foot of a section */
+  margin-top: 2rem;
+  max-width: none;           /* override the 68ch prose cap */
+  padding: 1.5rem 1.6rem;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 8px;
+  font-family: var(--font-head);
+  font-size: 1.3rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+.box strong {                /* small eyebrow label inside the box */
   display: block;
   margin-bottom: 0.5rem;
   font-family: var(--font-body);
@@ -160,33 +169,36 @@ section p { margin-top: 0.85rem; }
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--blue);
+  color: #fff;
 }
 
-#research ul {
+.cards {                     /* 2 per row; pairs fill the row, works for 2-6, lone last one centres */
   list-style: none;
   padding: 0;
   margin-top: 1.6rem;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1.25rem;
 }
-#research li {
+.cards li {
+  flex: 0 1 calc(50% - 0.625rem);
+  background: #fff;          /* lift off the off-white page; the shadow gives depth, no colour bar */
   border: 1px solid var(--border);
-  border-top: 4px solid var(--blue);
   border-radius: 8px;
   padding: 1.25rem;
+  box-shadow: 0 1px 3px rgba(27, 36, 48, 0.06), 0 1px 2px rgba(27, 36, 48, 0.04);
 }
-#research li h3 { color: var(--blue); font-size: 1.15rem; }
-#research li p { margin-top: 0.45rem; font-size: 0.97rem; }
+.cards h3 { color: var(--accent); font-size: 1.15rem; }
+.cards li p { margin-top: 0.45rem; font-size: 0.97rem; text-align: justify;}
 
+/* 6. Group, lecture video, places -------------------------------- */
 #group ul { margin-top: 0.6rem; padding-left: 1.2rem; }
 #group li { margin-top: 0.3rem; }
 #group figure { max-width: 380px; margin: 1.5rem auto 0; }
 #group img { border-radius: 8px; }
 #group figcaption { margin-top: 0.5rem; font-size: 0.9rem; color: var(--muted); text-align: center; }
 
-/* 6. Lecture video ----------------------------------------------- */
 #lectures iframe {
   display: block;
   width: 100%;
@@ -196,7 +208,6 @@ section p { margin-top: 0.85rem; }
   margin-top: 1.25rem;
 }
 
-/* 7. Places (map) ------------------------------------------------- */
 #places iframe {
   display: block;
   width: 100%;
@@ -206,19 +217,19 @@ section p { margin-top: 0.85rem; }
   margin-top: 1.5rem;
   background: var(--gray);
 }
-#places .cta {                       /* attached caption bar, flush to the map */
+.cta {                              /* caption bar flush to the map; takes the section accent */
   max-width: none;
   margin-top: 0;
   padding: 1.1rem 1.3rem;
-  background: var(--blue);
+  background: var(--accent);
   color: #fff;
   border-radius: 0 0 8px 8px;
   font-size: 1.1rem;
   font-weight: 500;
 }
-#places .cta a { color: #fff; font-weight: 600; }
+.cta a { color: #fff; font-weight: 600; }
 
-/* 8. Footer ------------------------------------------------------- */
+/* 7. Footer ------------------------------------------------------- */
 footer {
   background: var(--gray);
   color: var(--muted);
@@ -227,12 +238,63 @@ footer {
   font-size: 0.9rem;
 }
 
-/* 9. Responsive --------------------------------------------------- */
+/* 8. Responsive --------------------------------------------------- */
 @media (max-width: 760px) {
-  #hero > div { flex-direction: column; text-align: center; }
-  #hero nav { justify-content: center; }
-  #hero img { width: 200px; height: 200px; }
-  #hero h1 { font-size: 2rem; }
+  header > div { flex-direction: column; text-align: center; }
+  header nav { justify-content: center; }
+  header img { width: 200px; height: 200px; }
+  header h1 { font-size: 2rem; }
 
-  #research > div { grid-template-columns: 1fr; gap: 1.5rem; }
+  .cards li { flex-basis: 100%; }   /* one card per row on narrow screens */
+}
+
+/* 9. Section nav (scroll-spy) ------------------------------------- */
+/* Shown only where the gutter is wide enough; offset from the content column (tracks it, not the
+   screen edge); markers sit on the body side. Big but faint (alpha) so it stays subordinate to the
+   content; full strength on hover. The inline script only sets aria-current on the in-view section. */
+#toc { display: none; }
+@media (min-width: 1500px) {
+  #toc {
+    display: block;
+    position: fixed;
+    top: 50%;
+    right: calc(50% + var(--maxw) / 2 + 2rem);
+    transform: translateY(-50%);
+    z-index: 10;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+  #toc:hover { opacity: 1; }
+}
+#toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+#toc a {
+  --hue: var(--blue);
+  display: flex;
+  flex-direction: row-reverse;     /* marker nearest the body, label to its left */
+  align-items: center;
+  gap: 0.7rem;
+  color: var(--muted);
+  font-family: var(--font-head);
+  font-size: 2rem;
+  font-weight: 200;                /* Space Grotesk floors at 300, so this renders ~300 (thin) */
+  text-decoration: none;
+  line-height: 1.2;
+}
+#toc a::before {                   /* hue marker; grows when active */
+  content: "";
+  width: 1.6rem;
+  height: 2px;
+  flex: none;
+  background: var(--border);
+  transition: background 0.2s, width 0.2s;
+}
+#toc a:hover { color: var(--ink); }
+#toc a[href="#group"]    { --hue: var(--green); }
+#toc a[href="#lectures"] { --hue: var(--yellow-dark); }
+#toc a[href="#places"]   { --hue: var(--red); }
+#toc a[aria-current="true"] { color: var(--hue); font-weight: 600; }
+#toc a[aria-current="true"]::before { background: var(--hue); width: 2.6rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  #toc, #toc a::before { transition: none; }
 }
