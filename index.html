@@ -14,16 +14,6 @@
 </head>
 <body>
 
-<nav id="toc" aria-label="On this page">
-  <ul>
-    <li><a href="#top">Research</a></li>
-    <li><a href="#projects">Projects</a></li>
-    <li><a href="#group">Group</a></li>
-    <li><a href="#lectures">Lectures</a></li>
-    <li><a href="#places">Places</a></li>
-  </ul>
-</nav>
-
 <header id="top">
   <div>
     <img src="img/mp.jpg" alt="Photo of Martin Plávala" width="400" height="400">
@@ -42,9 +32,21 @@
   </div>
 </header>
 
+<div class="page">
+
+<nav id="toc" aria-label="On this page">
+  <ul>
+    <li><a href="#top">Research</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#group">Group</a></li>
+    <li><a href="#lectures">Lectures</a></li>
+    <li><a href="#places">Places</a></li>
+  </ul>
+</nav>
+
 <main>
 
-  <section id="philosophy" class="blue">
+  <section id="research" class="blue">
     <h2>Research philosophy</h2>
     <p class="highlight">Physics poses the questions, convex geometry gives them structure, machine learning solves them at scale.</p>
     <p>I work on convex optimization, mostly semidefinite and linear programming. A surprising number of questions in quantum information turn into the same shape of problem: you write the question as a semidefinite or linear program, often as a convergent hierarchy of them, and then solve it to show what is possible and what is ruled out. I use this to certify entanglement, to ask whether gravity has to be quantum, and to decide which correlations a quantum network can produce. When the programs grow too large to solve head on, I train neural networks to solve them. One toolbox, many questions.</p>
@@ -118,6 +120,8 @@
 
 </main>
 
+</div>
+
 <footer>
   <p>© Martin Plávala. All rights reserved.</p>
 </footer>
@@ -163,11 +167,11 @@
 
     if (!('IntersectionObserver' in window)) return;
 
-    // Pair each link with the section to watch; the Philosophy item (#top) watches the first section.
+    // Pair each link with the section to watch; the Research Philosophy item (#top) watches the first section.
     var pairs = [];
     links.forEach(function (a) {
       var href = a.getAttribute('href');
-      var sec = document.getElementById(href === '#top' ? 'philosophy' : href.slice(1));
+      var sec = document.getElementById(href === '#top' ? 'research' : href.slice(1));
       if (sec) pairs.push({ link: a, sec: sec });
     });
     function setActive(sec) {

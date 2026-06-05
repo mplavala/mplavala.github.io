@@ -249,19 +249,23 @@ footer {
 }
 
 /* 9. Section nav (scroll-spy) ------------------------------------- */
-/* Shown only where the gutter is wide enough; offset from the content column (tracks it, not the
-   screen edge); markers sit on the body side. Big but faint (alpha) so it stays subordinate to the
-   content; full strength on hover. The inline script only sets aria-current on the in-view section. */
+/* Shown only where the gutter is wide enough. A grid puts the nav in the left gutter and keeps the
+   content column centred on screen; the nav is sticky, so it starts at the top of main (below the
+   hero, never over the blue) and then rides the scroll. Big but faint (alpha), full on hover. */
 #toc { display: none; }
 @media (min-width: 1500px) {
+  .page { display: grid; grid-template-columns: 1fr minmax(0, var(--maxw)) 1fr; }
+  main { grid-column: 2; }
   #toc {
     display: block;
-    position: fixed;
-    top: 50%;
-    right: calc(50% + var(--maxw) / 2 + 2rem);
-    transform: translateY(-50%);
-    z-index: 10;
-    opacity: 0.4;
+    grid-column: 1;
+    align-self: start;            /* shrink to content height so sticky can offset it */
+    justify-self: end;            /* shrink to content width + sit by the column, so hover is only on the labels */
+    margin-top: 3rem;             /* drop below the hero, matching the first section's padding-top */
+    margin-inline-end: 2rem;      /* gap to the content column (margin, not padding, so it's outside the hover box) */
+    position: sticky;
+    top: 3rem;
+    opacity: 0.6;
     transition: opacity 0.2s;
   }
   #toc:hover { opacity: 1; }
