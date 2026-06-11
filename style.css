@@ -8,7 +8,7 @@
      3. Header (hero)
      4. Sections + colour classes
      5. Reusable pieces: .highlight, .box, .cards
-     6. Group, lecture video, places (map)
+     6. Group, embeds (iframes), places (map)
      7. Footer
      8. Responsive
      9. Section nav (scroll-spy)
@@ -192,30 +192,24 @@ section p { margin-top: 0.85rem; }
 .cards h3 { color: var(--accent); font-size: 1.15rem; }
 .cards li p { margin-top: 0.45rem; font-size: 0.97rem; text-align: justify;}
 
-/* 6. Group, lecture video, places -------------------------------- */
+/* 6. Group, embeds, places ---------------------------------------- */
 #group ul { margin-top: 0.6rem; padding-left: 1.2rem; }
 #group li { margin-top: 0.3rem; }
 #group figure { max-width: 380px; margin: 1.5rem auto 0; }
 #group img { border-radius: 8px; }
 #group figcaption { margin-top: 0.5rem; font-size: 0.9rem; color: var(--muted); text-align: center; }
 
-#lectures iframe {
+main iframe {                       /* any embed (video, map, ...) in any section */
   display: block;
   width: 100%;
   aspect-ratio: 16 / 9;
   border: 0;
   border-radius: 8px;
-  margin-top: 1.25rem;
-}
-
-#places iframe {
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  border: 0;
-  border-radius: 8px 8px 0 0;       /* connects to the CTA bar below */
   margin-top: 1.5rem;
-  background: var(--gray);
+  background: var(--gray);          /* placeholder while the embed loads */
+}
+#places iframe {
+  border-radius: 8px 8px 0 0;       /* connects to the CTA bar below */
 }
 .cta {                              /* caption bar flush to the map; takes the section accent */
   max-width: none;
@@ -272,7 +266,7 @@ footer {
 }
 #toc ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
 #toc a {
-  --hue: var(--blue);
+  --hue: var(--ink);
   display: flex;
   flex-direction: row-reverse;     /* marker nearest the body, label to its left */
   align-items: center;
@@ -292,10 +286,10 @@ footer {
   background: var(--border);
   transition: background 0.2s, width 0.2s;
 }
-#toc a:hover { color: var(--ink); }
-#toc a[href="#group"]    { --hue: var(--green); }
-#toc a[href="#lectures"] { --hue: var(--yellow-dark); }
-#toc a[href="#places"]   { --hue: var(--red); }
+#toc a.blue    { --hue: var(--blue); }
+#toc a.green    { --hue: var(--green); }
+#toc a.yellow { --hue: var(--yellow-dark); }
+#toc a.red   { --hue: var(--red); }
 #toc a[aria-current="true"] { color: var(--hue); font-weight: 600; }
 #toc a[aria-current="true"]::before { background: var(--hue); width: 2.6rem; }
 
